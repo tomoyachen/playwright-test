@@ -1,0 +1,12 @@
+# 缓存目录
+__pycache__/
+
+# pre-commit目录
+.mypy_cache/
+.pytest_cache/
+
+# 日志目录
+output/
+
+# 其他
+.idea
