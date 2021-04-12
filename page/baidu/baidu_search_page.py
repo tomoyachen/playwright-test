@@ -1,13 +1,13 @@
 from common.tools import Tools
+from playwright.async_api import Page
 
+class BaiduSearchPage:
 
-class BaiduPage:
-    host = Tools.get_config("base_url")
-    path = "/"
-
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
 
+        self.host = Tools.get_config("base_url")
+        self.path = "/"
         self.url = self.host + self.path
         self.search_input = "#kw"  # 搜索框
         self.search_button = "#su"  # 搜索按钮
@@ -18,6 +18,6 @@ class BaiduPage:
     def open(self):
         self.page.goto(self.url)
 
-    def search_keywords(self, keywords):
+    def search_keywords(self, keywords: str):
         self.page.type(self.search_input, text=keywords)
         self.page.click(self.search_button)

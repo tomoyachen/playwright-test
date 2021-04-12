@@ -4,12 +4,14 @@
 
 playwright 文档
 https://pypi.org/project/playwright/
+https://playwright.dev/python/docs/intro/
 
 pytest-playwright 文档
 https://pypi.org/project/pytest-playwright/
 
-本项目参考了虫师的项目
+本项目参考了虫师 & Yusuke Iwaki 的项目
 https://github.com/defnngj/playwright-pro
+https://zenn.dev/yusukeiwaki/articles/cfda648dc170e5
 
 
 ## 1. 安装
@@ -90,3 +92,10 @@ Pytest 配置 在pytest.ini 文件中
 pre-commit install #安装git hook脚本
 pre-commit run --all-files #运行所配置的所有规则，使其起作用
 ```
+
+
+## 5. 其他
+### 5.1 已知的编码问题
+mac、linux 和 windows 系统下 对 pytest.int 文件中的中文解码方式不同。
+mac、linux 使用 utf-8，windows 使用 ASCII
+最简单的方式就是不使用中文

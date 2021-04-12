@@ -1,12 +1,19 @@
 import pytest
 from playwright.async_api import Page, Dialog
-from page.baidu.baidu_page import BaiduPage
+from page.baidu.baidu_search_page import BaiduSearchPage
 import time
+from common.tools import Tools
+
+class BaiduSearchTest:
+
+    # 测试数据都存放在 fixtures
+    @pytest.fixture()
+    def fixtures(self):
+        yield Tools.get_fixtures("baidu_search")
 
 
-class BaiduTest:
     @staticmethod
-    def test_baidu_search(page: Page):
+    def test_baidu_search(page: Page, env: dict, fixtures):
         """
         名称：百度搜索"playwright"
         步骤：
@@ -16,15 +23,16 @@ class BaiduTest:
         检查点：
         * 检查页面标题是否相等。
         """
-        baiduPage = BaiduPage(page)
-        baiduPage.open()
-        baiduPage.search_keywords("playwright")
+
+        baiduSearchPage = BaiduSearchPage(page)
+        baiduSearchPage.open()
+        baiduSearchPage.search_keywords(fixtures['kerwords'])
         time.sleep(2)
-        assert baiduPage.page.title() == "playwright_百度搜索"
+        assert baiduSearchPage.page.title() == f'{fixtures["kerwords"]}_百度搜索'
         assert 1 == 2
 
     @staticmethod
-    def test_baidu_search_setting(page):
+    def test_baidu_search_setting(page: Page):
         """
         名称：百度搜索设置
         步骤：
@@ -36,11 +44,11 @@ class BaiduTest:
         检查点：
         * 检查是否弹出提示框
         """
-        baiduPage = BaiduPage(page)
-        baiduPage.page.goto(baiduPage.url)
-        baiduPage.page.click(baiduPage.settings)
-        baiduPage.page.click(baiduPage.search_setting)
-        baiduPage.page.click(baiduPage.save_setting)
+        baiduSearchPage = BaiduSearchPage(page)
+        baiduSearchPage.page.goto(baiduSearchPage.url)
+        baiduSearchPage.page.click(baiduSearchPage.settings)
+        baiduSearchPage.page.click(baiduSearchPage.search_setting)
+        baiduSearchPage.page.click(baiduSearchPage.save_setting)
 
         def on_dialog(dialog: Dialog):
             assert dialog.type == "alert"

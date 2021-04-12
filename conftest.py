@@ -36,21 +36,32 @@ def env(request):
         env_config = yaml.load(f.read(), Loader=yaml.SafeLoader)
     yield env_config
 
-# pytest-playwright 启动时就已经有 page fixture 对象，所以不用自己定义
-# @pytest.fixture(scope='session')
-# def page():
+# 骚操作，不建议这么写。用法是 fixtures("search_baidu")['kerwords']
+# @pytest.fixture(scope="class")
+# def fixtures():
 #     """
-#     自定义全局 page 对象，需要自己配置浏览器驱动 与 是否无头。
-#
+#     测试数据，存放在fixtures目录下，这里是我习惯性引入 Cypress的概念，实际就是测试数据
 #     :return:
 #     """
-#     with sync_playwright() as p:
-#         browser = p.webkit.launch(headless=False)
-#         # context = browser.new_context()
-#         # page = context.new_page()
-#         page = browser.new_page()
-#         yield page
+#     def _fixtures(filename: str):
+#         from common.tools import Tools
+#         return Tools.get_fixtures(filename)
+#
+#     yield _fixtures
 
+
+@pytest.fixture(scope="session")
+def browser_context_args(browser_context_args, tmpdir_factory: pytest.TempdirFactory):
+    """
+    pytest-playwrigt 内置钩子
+    :param browser_context_args:
+    :param tmpdir_factory:
+    :return:
+    """
+    return {
+        **browser_context_args,
+        "record_video_dir": os.path.join(OUTPUT_DIR, "videos") #开始录制时并不知道测试结果正确与否，所以成功失败都会录制
+        }
 
 def pytest_addoption(parser):
     """
@@ -79,11 +90,13 @@ def pytest_runtest_makereport(item):
     用于向测试用例中添加用例的开始时间、内部注释，和失败截图等.
     :param item:
     """
+
     pytest_html = item.config.pluginmanager.getplugin('html')
-    outcome = yield
-    report = outcome.get_result()
+    callers = yield
+    report = callers.get_result()
     report.description = description_html(item.function.__doc__)
-    extra = getattr(report, 'extra', [])
+    report.extra = []
+
     if "page" not in item.funcargs:
         return "page not in item.funcargs"
     page = item.funcargs["page"]
@@ -91,15 +104,43 @@ def pytest_runtest_makereport(item):
         xfail = hasattr(report, 'wasxfail')
         if (report.skipped and xfail) or (report.failed and not xfail):
             case_name = report.nodeid.replace("::", "_") + ".png"
-            image_relative_path = os.path.join("image", case_name.replace('testcase/', ''))
+            image_relative_path = os.path.join("images", case_name.replace('testcase/', ''))
             image_absolute_path = os.path.join(OUTPUT_DIR, image_relative_path)
             capture_screenshots(image_absolute_path, page)
             if image_relative_path:
                 html = '<div><img src="%s" alt="screenshot" style="height:360px;" ' \
                        'onclick="window.open(this.src)" align="right"/></div>' % image_relative_path
-                extra.append(pytest_html.extras.html(html))
-        report.extra = extra
+                report.extra.append(pytest_html.extras.html(html))
 
+# TODO: 使用 allure 以更好的呈现截图与视频
+# ref: https://zenn.dev/yusukeiwaki/articles/cfda648dc170e5
+# @pytest.mark.hookwrapper
+# def pytest_runtest_makereport(item, call):
+#     """
+#     用于向测试用例中添加用例的开始时间、内部注释，和失败截图等.
+#     :param item:
+#     """
+#     if call.when == "call":
+#         # 失败的情况下
+#         if call.excinfo is not None and "page" in item.funcargs:
+#             from playwright.async_api import Page
+#             page: Page = item.funcargs["page"]
+#
+#             # allure.attach(
+#             #     page.screenshot(type='png'),
+#             #     name=f"{slugify(item.nodeid)}.png",
+#             #     attachment_type=allure.attachment_type.PNG
+#             # )
+#
+#             video_path = page.video.path()
+#             page.context.close()  # ensure video saved
+#             # allure.attach(
+#             #     open(video_path, 'rb').read(),
+#             #     name=f"{slugify(item.nodeid)}.webm",
+#             #     attachment_type=allure.attachment_type.WEBM
+#             # )
+#
+#     callers = yield
 
 @pytest.mark.optionalhook
 def pytest_html_results_table_header(cells):
@@ -120,7 +161,8 @@ def pytest_html_results_table_row(report, cells):
     :param cells:
     :return:
     """
-    cells.insert(2, html.td(report.description))
+
+    cells.insert(2, html.td(report.description if hasattr(report, "description") else ""))
     cells.pop()
 
 
@@ -201,7 +243,10 @@ def capture_screenshots(image_path, page):
     image_dir = os.path.dirname(image_path)
     if not os.path.exists(image_dir):
         os.makedirs(image_dir)
-    page.screenshot(path=image_path)
+    try:
+        page.screenshot(path=image_path)
+    except Exception as e:
+        print(f'截图失败 {e}')
 
 
 if __name__ == "__main__":

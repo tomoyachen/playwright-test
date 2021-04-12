@@ -44,9 +44,18 @@ class Tools:
 
     @staticmethod
     def get_config(key=None):
-        env = Tools.get_env("TEST_ENV") if Tools.get_env("TEST_ENV") else 'dev'
+        env = Tools.get_env("TEST_ENV")
         with open(os.path.join(Tools.get_root_dir(), 'config', f"{env}.yaml"), encoding="UTF-8") as f:
             config = yaml.load(f.read(), Loader=yaml.SafeLoader)
             if key is not None:
                 return config[key]
             return config
+
+    @staticmethod
+    def get_fixtures(filename, key=None):
+        env = Tools.get_env("TEST_ENV")
+        with open(os.path.join(Tools.get_root_dir(), 'fixtures', f"{env}", f"{filename}.yaml"), encoding="UTF-8") as f:
+            fixtures = yaml.load(f.read(), Loader=yaml.SafeLoader)
+            if key is not None:
+                return fixtures[key]
+            return fixtures
