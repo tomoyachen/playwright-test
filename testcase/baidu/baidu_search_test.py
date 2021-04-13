@@ -58,5 +58,25 @@ class BaiduSearchTest:
         page.on("dialog", on_dialog)
 
 
+    # Network events
+    # ref: https://playwright.dev/python/docs/network#network-events
+    @staticmethod
+    def test_baidu_search_with_network(page: Page, env: dict, fixtures):
+        """
+        获取请求/ 响应
+        """
+        import re
+
+        page.on("request",
+                lambda request: print(">>", request.method, request.url) if not re.findall('.*/.[js|css|png]',
+                                                                                           request.url) else None)
+        page.on("response",
+                lambda response: print("<<", response.status, response.url) if not re.findall('.*/.[js|css|png]',
+                                                                                              response.url) else None)
+
+        baiduSearchPage = BaiduSearchPage(page)
+        baiduSearchPage.open()
+
+
 if __name__ == '__main__':
     pytest.main(["-v", "-s"])
