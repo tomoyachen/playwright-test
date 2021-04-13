@@ -68,6 +68,7 @@ poetry run pytest testcase --ignore=testcase/aaa/bbb -s -v
 常用参数：
 * -s 显示打印内容
 * -v 显示详细执行过程
+* --browser 指定浏览器 chromium, webkit, firefox（pytest-playwright）
 * --headed 有头模式执行，不传此参数就是无头浏览器执行（pytest-playwright）
 
 pytest.ini 文件中，addopts 可以配置默认附带参数

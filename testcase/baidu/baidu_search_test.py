@@ -4,6 +4,10 @@ from page.baidu.baidu_search_page import BaiduSearchPage
 import time
 from common.tools import Tools
 
+# 我希望每个测试方法都启动一次浏览器
+# 因为 pytest-playwright 内置的 page fixture作用域是function
+# 所有使用内置的 page fixture 时，每次测试方法执行前生成、执行后销毁，即每个测试方法开启一次浏览器
+
 class BaiduSearchTest:
 
     # 测试数据都存放在 fixtures

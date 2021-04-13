@@ -49,9 +49,9 @@ def env(request):
 #
 #     yield _fixtures
 
-
+# ref: https://github.com/microsoft/playwright-pytest
 @pytest.fixture(scope="session")
-def browser_context_args(browser_context_args, tmpdir_factory: pytest.TempdirFactory):
+def browser_context_args(browser_context_args):
     """
     pytest-playwrigt 内置钩子
     :param browser_context_args:
