@@ -3,6 +3,7 @@ from playwright.async_api import Page, Dialog
 from page.baidu.baidu_search_page import BaiduSearchPage
 import time
 from common.tools import Tools
+import allure
 
 class BaiduSearchTest:
 
@@ -13,6 +14,7 @@ class BaiduSearchTest:
 
 
     @staticmethod
+    @allure.title('百度搜索')
     def test_baidu_search(page: Page, env: dict, fixtures):
         """
         名称：百度搜索"playwright"
@@ -31,7 +33,9 @@ class BaiduSearchTest:
         assert baiduSearchPage.page.title() == f'{fixtures["kerwords"]}_百度搜索'
         assert 1 == 2
 
+
     @staticmethod
+    @allure.title('百度搜索设置信息')
     def test_baidu_search_setting(page: Page):
         """
         名称：百度搜索设置

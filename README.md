@@ -35,7 +35,7 @@ poetry run playwright install
 
 
 ## 2. 执行测试
-## 2.1 PyCharm 执行
+### 2.1 PyCharm 执行
 查看虚拟环境路径
 ```
 poetry shell
@@ -50,7 +50,7 @@ Preferences -> Tools -> Python Integrated Tools -> Testing -> pytest
 PyCharm 执行 测试用例
 配置成功后，符合命名规则的测试类与测试方法可以在行数列快速执行
 
-## 2.2 命令行执行
+### 2.2 命令行执行
 命令：
 
 pytest 用例路径 -参数 --参数
@@ -73,7 +73,40 @@ poetry run pytest testcase --ignore=testcase/aaa/bbb -s -v
 pytest.ini 文件中，addopts 可以配置默认附带参数
 
 
-## 3. 配置信息
+## 3 allure 报告
+### 3.1 安装 allure 服务
+Windows 
+通过 [github](https://github.com/allure-framework/allure2/releases) 下载
+将安装路径下的 /bin 添加到环境变量
+
+macOS
+可以通过 brew 安装
+```bash
+brew install allure
+```
+也可以通过下载的方式，解压后配置环境变量
+```bash
+vim ~/.zprofile
+```
+~/.zprofile 添加以下内容，添加后重启终端
+```
+# allure
+PATH="/Users/你的用户名/Desktop/atlas1.0/27other/allure-2.7.0/bin:${PATH}"
+export PATH
+```
+
+### 3.2 生成报告
+```bash
+pytest testcase --alluredir report
+```
+
+### 3.3 启动报告服务
+```bash
+allure serve report
+```
+
+
+## 4. 配置信息
 
 业务相关配置在 `config` 目录下的 yaml 文件中
 * test 方法 或 fixture 方法中，使用 env fixture 来读取配置信息
@@ -81,8 +114,8 @@ pytest.ini 文件中，addopts 可以配置默认附带参数
 
 Pytest 配置 在pytest.ini 文件中
 
-## 4. 预检查【扩展】
-### 4.1 pre-commit
+## 5. 预检查【扩展】
+### 5.1 pre-commit
 
 每次git commit都会自动检查，并且会自动修复一部分格式问题，通过检查才会提交成功
 * 记得 git add . 来更新被检测文件
@@ -94,8 +127,9 @@ pre-commit run --all-files #运行所配置的所有规则，使其起作用
 ```
 
 
-## 5. 其他
-### 5.1 Playwrigth 录制功能
+
+## 6. 其他
+### 6.1 Playwrigth 录制功能
 ```bash
 # 快速启动录制工具
 python -m playwright codegen
@@ -107,7 +141,8 @@ python -m playwright codegen --target python -o testcase/sample.py https://www.b
 python -m playwright codegen --help
 ```
 
-### 5.2 已知的编码问题
+### 6.2 已知的编码问题
+
 mac、linux 和 windows 系统下 对 pytest.int 文件中的中文解码方式不同。
 mac、linux 使用 utf-8，windows 使用 ASCII
 最简单的方式就是不使用中文

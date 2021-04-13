@@ -11,6 +11,7 @@ pytest-playwright = "^0.1.0"
 pytest-html = "^3.1.1"
 pytest-rerunfailures = "^9.1.1"
 pyyaml = "^5.4.1"
+allure-pytest = "^2.8.40"
 
 [tool.poetry.dev-dependencies]
 
