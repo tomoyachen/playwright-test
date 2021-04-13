@@ -95,7 +95,19 @@ pre-commit run --all-files #运行所配置的所有规则，使其起作用
 
 
 ## 5. 其他
-### 5.1 已知的编码问题
+### 5.1 Playwrigth 录制功能
+```bash
+# 快速启动录制工具
+python -m playwright codegen
+
+# 指定输出 py 文件、指定 baseUrl
+python -m playwright codegen --target python -o testcase/sample.py https://www.baidu.com/
+
+# 查看帮助
+python -m playwright codegen --help
+```
+
+### 5.2 已知的编码问题
 mac、linux 和 windows 系统下 对 pytest.int 文件中的中文解码方式不同。
 mac、linux 使用 utf-8，windows 使用 ASCII
 最简单的方式就是不使用中文
