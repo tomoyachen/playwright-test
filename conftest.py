@@ -3,10 +3,22 @@ import pytest
 from py.xml import html
 import time
 # from playwright.sync_api import sync_playwright
+from playwright.async_api import Page, Browser
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = os.path.join(ROOT_DIR, "output", time.strftime("%Y%m%d%H%M%S"))
 
+
+@pytest.fixture(scope="class")
+def page(browser: Browser):
+    # 用例每执行一个class前new page，执行结束后close()
+    page:Page = browser.new_page(locale="zh-CN")
+    # 设定浏览器地区为中文
+    # ref: https://playwright.bootcss.com/docs/api/class-browser#browsernewpageoptions
+
+    yield page
+
+    page.close()
 
 @pytest.fixture(scope="session", autouse=True)
 def init_system_env(request):

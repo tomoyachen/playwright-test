@@ -10,11 +10,9 @@ baiduSearchPage: BaiduSearchPage
 class BaiduSearchTest:
 
     @pytest.fixture(scope="class", autouse=True)
-    def page(self, browser: Browser):
-        page = browser.new_page()
+    def before(self, page: Page):
         global baiduSearchPage
         baiduSearchPage = BaiduSearchPage(page)
-        yield page
 
 
     @pytest.fixture()
